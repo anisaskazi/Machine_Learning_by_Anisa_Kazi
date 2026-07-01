@@ -1,0 +1,30 @@
+# Day 1: Introduction to Machine Learning
+
+"""
+Machine Learning is a branch of Artificial Intelligence
+where computers learn patterns from data and make predictions
+or decisions without being explicitly programmed.
+
+Example:
+Instead of writing rules to identify spam emails,
+we train a machine learning model using many spam and non-spam emails.
+"""
+
+# Simple example: Predict pass/fail based on marks
+
+marks = [35, 45, 50, 60, 75, 90]
+results = ["Fail", "Pass", "Pass", "Pass", "Pass", "Pass"]
+
+def predict_result(mark):
+    if mark >= 40:
+        return "Pass"
+    else:
+        return "Fail"
+
+# Testing the model logic
+test_marks = 38
+
+prediction = predict_result(test_marks)
+
+print("Marks:", test_marks)
+print("Prediction:", prediction)
