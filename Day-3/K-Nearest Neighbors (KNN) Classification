@@ -1,0 +1,49 @@
+# Day 3 Machine Learning Code
+# K-Nearest Neighbors (KNN) Classification
+# Predict whether a fruit is an Apple or Orange
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# Dataset
+data = {
+    "Weight": [120, 130, 150, 170, 140, 160, 180, 200],
+    "Size":   [6.0, 6.5, 7.0, 7.5, 6.8, 7.2, 7.8, 8.0],
+    "Fruit":  ["Apple", "Apple", "Apple", "Orange",
+               "Apple", "Orange", "Orange", "Orange"]
+}
+
+df = pd.DataFrame(data)
+
+# Features and Target
+X = df[["Weight", "Size"]]
+y = df["Fruit"]
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42
+)
+
+# Create KNN Model
+model = KNeighborsClassifier(n_neighbors=3)
+
+# Train Model
+model.fit(X_train, y_train)
+
+# Predict Test Data
+y_pred = model.predict(X_test)
+
+# Evaluation
+print("Actual:", list(y_test))
+print("Predicted:", list(y_pred))
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Predict a New Fruit
+new_fruit = [[155, 7.1]]
+prediction = model.predict(new_fruit)
+
+print("\nNew Fruit Prediction:", prediction[0])
