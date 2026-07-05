@@ -1,0 +1,39 @@
+# Day 5 - Decision Tree Classification
+# Predicting Wine Classes
+
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+wine = load_wine()
+X = wine.data
+y = wine.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Create model
+model = DecisionTreeClassifier(random_state=42)
+
+# Train model
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate model
+accuracy = accuracy_score(y_test, y_pred)
+
+print("Accuracy:", accuracy)
+
+# Predict a new sample
+sample = [13.2, 2.7, 2.5, 18.5, 100, 2.8, 3.0, 0.3,
+          1.5, 5.0, 1.0, 3.2, 1000]
+
+prediction = model.predict([sample])
+
+print("Predicted Wine Class:", prediction[0])
