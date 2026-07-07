@@ -1,0 +1,51 @@
+# Day 7: Random Forest Classifier - Wine Quality Classification
+
+import pandas as pd
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load dataset
+wine = load_wine()
+
+# Create DataFrame
+df = pd.DataFrame(wine.data, columns=wine.feature_names)
+df["target"] = wine.target
+
+print("First 5 Rows:")
+print(df.head())
+
+# Features and Target
+X = df.drop("target", axis=1)
+y = df["target"]
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42
+)
+
+# Train Random Forest model
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+model.fit(X_train, y_train)
+
+# Prediction
+y_pred = model.predict(X_test)
+
+# Accuracy
+print("\nAccuracy:", accuracy_score(y_test, y_pred))
+
+# Classification Report
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# Custom Prediction
+sample = [X.iloc[0].values]
+prediction = model.predict(sample)
+
+print("\nPredicted Wine Class:", prediction[0])
+print("Actual Wine Class:", y.iloc[0])
