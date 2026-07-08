@@ -1,0 +1,40 @@
+# Day 8: K-Means Clustering
+# Customer Segmentation using Machine Learning
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+# Sample dataset
+data = {
+    "Age": [19, 21, 20, 23, 31, 35, 40, 45, 50, 52],
+    "Annual_Income": [15000, 18000, 17000, 22000, 40000, 45000, 60000, 65000, 80000, 85000],
+    "Spending_Score": [80, 75, 85, 70, 55, 50, 35, 30, 20, 15]
+}
+
+df = pd.DataFrame(data)
+
+print("Dataset:")
+print(df)
+
+# Features
+X = df[["Annual_Income", "Spending_Score"]]
+
+# Scaling
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# K-Means model
+kmeans = KMeans(n_clusters=3, random_state=42)
+df["Cluster"] = kmeans.fit_predict(X_scaled)
+
+print("\nClustered Data:")
+print(df)
+
+# Visualization
+plt.scatter(df["Annual_Income"], df["Spending_Score"], c=df["Cluster"])
+plt.xlabel("Annual Income")
+plt.ylabel("Spending Score")
+plt.title("Customer Segmentation using K-Means")
+plt.show()
