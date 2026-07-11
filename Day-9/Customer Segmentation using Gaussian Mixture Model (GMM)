@@ -1,0 +1,41 @@
+import numpy as np
+import pandas as pd
+from sklearn.mixture import GaussianMixture
+from sklearn.preprocessing import StandardScaler
+
+# Customer dataset
+data = {
+    "Age": [22, 25, 47, 52, 46, 56, 28, 30, 35, 40],
+    "Annual_Income": [15000, 18000, 55000, 65000, 62000, 70000, 25000, 30000, 45000, 50000],
+    "Spending_Score": [81, 77, 20, 18, 22, 15, 65, 60, 45, 40]
+}
+
+df = pd.DataFrame(data)
+
+# Features
+X = df
+
+# Scale the data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Train Gaussian Mixture Model
+gmm = GaussianMixture(n_components=3, random_state=42)
+gmm.fit(X_scaled)
+
+# Predict clusters
+clusters = gmm.predict(X_scaled)
+
+# Add clusters to dataframe
+df["Cluster"] = clusters
+
+print("Customer Segmentation using GMM\n")
+print(df)
+
+# Predict cluster for a new customer
+new_customer = [[32, 48000, 55]]
+new_customer_scaled = scaler.transform(new_customer)
+
+prediction = gmm.predict(new_customer_scaled)
+
+print("\nNew Customer belongs to Cluster:", prediction[0])
