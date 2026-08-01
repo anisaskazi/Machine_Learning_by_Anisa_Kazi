@@ -1,0 +1,70 @@
+# Day 10: Student Pass/Fail Prediction using Decision Tree
+
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+# Dataset: [Study Hours, Attendance (%)]
+X = np.array([
+    [1, 50],
+    [2, 55],
+    [2, 60],
+    [3, 65],
+    [3, 70],
+    [4, 72],
+    [4, 75],
+    [5, 78],
+    [5, 80],
+    [6, 82],
+    [6, 85],
+    [7, 88],
+    [7, 90],
+    [8, 92],
+    [8, 95],
+    [9, 96],
+    [10, 98],
+    [5, 68],
+    [3, 58],
+    [9, 94]
+])
+
+# 0 = Fail, 1 = Pass
+y = np.array([
+    0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1,
+    1, 1, 0, 0, 1
+])
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Train model
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Test model
+y_pred = model.predict(X_test)
+
+# Accuracy
+print("Accuracy:", round(accuracy_score(y_test, y_pred) * 100, 2), "%")
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, zero_division=0))
+
+# Predict for a new student
+new_student = [[6, 84]]
+
+prediction = model.predict(new_student)[0]
+
+print("\nNew Student Details")
+print("Study Hours:", new_student[0][0])
+print("Attendance:", new_student[0][1], "%")
+
+if prediction == 1:
+    print("Prediction: PASS")
+else:
+    print("Prediction: FAIL")
