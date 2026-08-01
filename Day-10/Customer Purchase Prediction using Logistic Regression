@@ -1,0 +1,79 @@
+# Day 10: Customer Purchase Prediction using Logistic Regression
+#Author:Anisa Kazi
+
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+
+# Dataset: [Age, Estimated Salary]
+X = np.array([
+    [19, 19000],
+    [21, 25000],
+    [22, 30000],
+    [25, 32000],
+    [27, 57000],
+    [29, 48000],
+    [31, 65000],
+    [33, 60000],
+    [35, 58000],
+    [36, 75000],
+    [38, 80000],
+    [40, 72000],
+    [42, 90000],
+    [44, 95000],
+    [46, 110000],
+    [48, 120000],
+    [50, 130000],
+    [52, 150000],
+    [55, 160000],
+    [60, 170000]
+])
+
+# 0 = No Purchase, 1 = Purchase
+y = np.array([
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1,
+    1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1
+])
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+# Feature Scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Train Model
+model = LogisticRegression(random_state=42)
+model.fit(X_train, y_train)
+
+# Predictions
+y_pred = model.predict(X_test)
+
+# Accuracy
+print("Accuracy:", round(accuracy_score(y_test, y_pred) * 100, 2), "%")
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, zero_division=0))
+
+# Predict New Customer
+new_customer = [[37, 85000]]
+new_customer_scaled = scaler.transform(new_customer)
+
+prediction = model.predict(new_customer_scaled)[0]
+probability = model.predict_proba(new_customer_scaled)[0][1]
+
+print("\nNew Customer:", new_customer[0])
+
+if prediction == 1:
+    print("Prediction: Customer is likely to purchase.")
+else:
+    print("Prediction: Customer is unlikely to purchase.")
+
+print(f"Purchase Probability: {probability * 100:.2f}%")
