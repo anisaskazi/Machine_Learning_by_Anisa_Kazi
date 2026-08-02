@@ -1,0 +1,178 @@
+# Day 11 of Machine Learning
+# Handwritten Digit Recognition using Support Vector Machine
+# Dataset: Scikit-learn Digits Dataset
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.datasets import load_digits
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    accuracy_score,
+    classification_report,
+    confusion_matrix
+)
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+
+
+def main():
+    print("=" * 65)
+    print("DAY 11: HANDWRITTEN DIGIT RECOGNITION USING SVM")
+    print("=" * 65)
+
+    # 1. Load the digits dataset
+    digits = load_digits()
+
+    X = digits.data
+    y = digits.target
+
+    print("\nDataset shape:", X.shape)
+    print("Number of images:", len(digits.images))
+    print("Image size:", digits.images[0].shape)
+    print("Target classes:", digits.target_names)
+
+    # 2. Display sample digit images
+    plt.figure(figsize=(10, 4))
+
+    for index in range(10):
+        plt.subplot(2, 5, index + 1)
+        plt.imshow(digits.images[index], cmap="gray")
+        plt.title(f"Digit: {digits.target[index]}")
+        plt.axis("off")
+
+    plt.suptitle("Sample Handwritten Digits")
+    plt.tight_layout()
+    plt.savefig("sample_digits.png", dpi=300)
+    plt.show()
+
+    # 3. Split the dataset
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.20,
+        random_state=42,
+        stratify=y
+    )
+
+    print("\nTraining samples:", X_train.shape[0])
+    print("Testing samples:", X_test.shape[0])
+
+    # 4. Scale the pixel values
+    scaler = StandardScaler()
+
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # 5. Create the Support Vector Machine model
+    model = SVC(
+        kernel="rbf",
+        C=10,
+        gamma="scale",
+        probability=True,
+        random_state=42
+    )
+
+    # 6. Train the model
+    model.fit(X_train_scaled, y_train)
+
+    # 7. Make predictions
+    y_pred = model.predict(X_test_scaled)
+
+    # 8. Evaluate the model
+    accuracy = accuracy_score(y_test, y_pred)
+
+    print("\nModel Accuracy:")
+    print(f"{accuracy * 100:.2f}%")
+
+    print("\nClassification Report:")
+    print(
+        classification_report(
+            y_test,
+            y_pred,
+            zero_division=0
+        )
+    )
+
+    # 9. Confusion matrix
+    matrix = confusion_matrix(y_test, y_pred)
+
+    print("\nConfusion Matrix:")
+    print(matrix)
+
+    display = ConfusionMatrixDisplay(
+        confusion_matrix=matrix,
+        display_labels=digits.target_names
+    )
+
+    display.plot(cmap="Blues", figsize=(9, 8))
+    plt.title("SVM Confusion Matrix")
+    plt.tight_layout()
+    plt.savefig("svm_confusion_matrix.png", dpi=300)
+    plt.show()
+
+    # 10. Display test predictions
+    plt.figure(figsize=(12, 6))
+
+    for index in range(15):
+        plt.subplot(3, 5, index + 1)
+        plt.imshow(
+            X_test[index].reshape(8, 8),
+            cmap="gray"
+        )
+
+        prediction = y_pred[index]
+        actual = y_test[index]
+
+        plt.title(
+            f"Actual: {actual}\nPredicted: {prediction}"
+        )
+        plt.axis("off")
+
+    plt.suptitle("Actual vs Predicted Digits")
+    plt.tight_layout()
+    plt.savefig("digit_predictions.png", dpi=300)
+    plt.show()
+
+    # 11. Predict a single digit
+    sample_index = 5
+
+    sample_image = X_test[sample_index].reshape(1, -1)
+    sample_scaled = scaler.transform(sample_image)
+
+    predicted_digit = model.predict(sample_scaled)[0]
+    probabilities = model.predict_proba(sample_scaled)[0]
+
+    print("\nSingle Image Prediction:")
+    print("Actual digit:", y_test[sample_index])
+    print("Predicted digit:", predicted_digit)
+
+    print("\nPrediction probabilities:")
+
+    for digit, probability in enumerate(probabilities):
+        print(f"Digit {digit}: {probability * 100:.2f}%")
+
+    # 12. Save prediction results
+    results = pd.DataFrame({
+        "Actual Digit": y_test,
+        "Predicted Digit": y_pred
+    })
+
+    results["Correct Prediction"] = (
+        results["Actual Digit"] == results["Predicted Digit"]
+    )
+
+    results.to_csv(
+        "digit_prediction_results.csv",
+        index=False
+    )
+
+    print("\nFiles created successfully:")
+    print("1. sample_digits.png")
+    print("2. svm_confusion_matrix.png")
+    print("3. digit_predictions.png")
+    print("4. digit_prediction_results.csv")
+
+
+if __name__ == "__main__":
+    main()
