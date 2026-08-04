@@ -1,0 +1,38 @@
+# Day 11: Anomaly Detection using Isolation Forest
+
+from sklearn.ensemble import IsolationForest
+from sklearn.datasets import load_wine
+import pandas as pd
+
+# Load dataset
+wine = load_wine()
+
+X = wine.data
+
+# Create DataFrame
+df = pd.DataFrame(X, columns=wine.feature_names)
+
+# Train Isolation Forest
+model = IsolationForest(
+    contamination=0.05,
+    random_state=42
+)
+
+# Predict anomalies
+predictions = model.fit_predict(X)
+
+# Add results to DataFrame
+df["Prediction"] = predictions
+df["Result"] = df["Prediction"].map({1: "Normal", -1: "Anomaly"})
+
+# Display results
+print("First 15 Records:")
+print(df.head(15))
+
+# Count anomalies
+print("\nSummary:")
+print(df["Result"].value_counts())
+
+# Show detected anomalies
+print("\nDetected Anomalies:")
+print(df[df["Result"] == "Anomaly"].head())
