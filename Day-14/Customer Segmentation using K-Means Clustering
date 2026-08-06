@@ -1,0 +1,51 @@
+# Day 14 - Customer Segmentation using K-Means Clustering
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+# Sample customer data
+data = {
+    "Annual_Income": [15, 16, 17, 18, 19, 40, 42, 45, 48, 50,
+                      60, 62, 65, 68, 70, 85, 88, 90, 92, 95],
+    "Spending_Score": [39, 81, 6, 77, 40, 76, 6, 94, 3, 72,
+                       20, 80, 15, 85, 30, 90, 35, 92, 25, 88]
+}
+
+df = pd.DataFrame(data)
+
+# Apply K-Means
+kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+df["Cluster"] = kmeans.fit_predict(df)
+
+# Print clustered data
+print(df)
+
+# Plot clusters
+plt.figure(figsize=(8,6))
+
+for cluster in sorted(df["Cluster"].unique()):
+    cluster_data = df[df["Cluster"] == cluster]
+    plt.scatter(
+        cluster_data["Annual_Income"],
+        cluster_data["Spending_Score"],
+        label=f"Cluster {cluster}"
+    )
+
+# Plot centroids
+centers = kmeans.cluster_centers_
+plt.scatter(
+    centers[:,0],
+    centers[:,1],
+    marker="X",
+    s=250,
+    label="Centroids"
+)
+
+plt.title("Customer Segmentation using K-Means")
+plt.xlabel("Annual Income")
+plt.ylabel("Spending Score")
+plt.legend()
+plt.grid(True)
+
+plt.show()
